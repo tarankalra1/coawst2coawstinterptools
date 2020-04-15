@@ -5,7 +5,14 @@ function create_roms_from_coawst(grid_file,bry_file,bry_time,...
     zeta_east,ubar_east,vbar_east,...
     zeta_west,ubar_west,vbar_west,....
     temp_north, temp_south, temp_east, temp_west,.....
-    sand_north_01, sand_south_01, sand_east_01, sand_west_01);
+    salt_north, salt_south, salt_east, salt_west,.....
+    u_north, u_south, u_east, u_west, .....
+    v_north, v_south, v_east, v_west, .....
+    sand_north_01, sand_south_01, sand_east_01, sand_west_01,......
+    sand_north_02, sand_south_02, sand_east_02, sand_west_02,.......
+    sand_north_03, sand_south_03, sand_east_03, sand_west_03,......
+    sand_north_04, sand_south_04, sand_east_04, sand_west_04,......
+    sand_north_05, sand_south_05, sand_east_05, sand_west_05);
  
 
 % Create a netcdf file that contains baoundary data for ROMS
@@ -70,10 +77,45 @@ ncwrite(bry_file,'temp_south',temp_south);
 ncwrite(bry_file,'temp_east', temp_east);
 ncwrite(bry_file,'temp_west', temp_west);
 
+ncwrite(bry_file,'salt_north',temp_north);
+ncwrite(bry_file,'salt_south',temp_south);
+ncwrite(bry_file,'salt_east', temp_east);
+ncwrite(bry_file,'salt_west', temp_west);
+
 ncwrite(bry_file,'sand_north_01',sand_north_01);
 ncwrite(bry_file,'sand_south_01',sand_south_01);
 ncwrite(bry_file,'sand_east_01',sand_east_01);
 ncwrite(bry_file,'sand_west_01', sand_west_01);
+
+ncwrite(bry_file,'sand_north_02',sand_north_02);
+ncwrite(bry_file,'sand_south_02',sand_south_02);
+ncwrite(bry_file,'sand_east_02',sand_east_02);
+ncwrite(bry_file,'sand_west_02', sand_west_02);
+
+ncwrite(bry_file,'sand_north_03',sand_north_03);
+ncwrite(bry_file,'sand_south_03',sand_south_03);
+ncwrite(bry_file,'sand_east_03',sand_east_03);
+ncwrite(bry_file,'sand_west_03', sand_west_03);
+
+ncwrite(bry_file,'sand_north_04',sand_north_04);
+ncwrite(bry_file,'sand_south_04',sand_south_04);
+ncwrite(bry_file,'sand_east_04',sand_east_04);
+ncwrite(bry_file,'sand_west_04', sand_west_04);
+
+ncwrite(bry_file,'sand_north_05',sand_north_05);
+ncwrite(bry_file,'sand_south_05',sand_south_05);
+ncwrite(bry_file,'sand_east_05',sand_east_05);
+ncwrite(bry_file,'sand_west_05', sand_west_05);
+
+ncwrite(bry_file,'u_north',u_north);
+ncwrite(bry_file,'u_south',u_south);
+ncwrite(bry_file,'u_east' ,u_east);
+ncwrite(bry_file,'u_west' ,u_west);
+
+ncwrite(bry_file,'v_north',v_north);
+ncwrite(bry_file,'v_south',v_south);
+ncwrite(bry_file,'v_east',v_east);
+ncwrite(bry_file,'v_west',v_west);
 % ncwrite(clm_file,'u',u);
 % ncwrite(clm_file,'v',v);
 % ncwrite(clm_file,'temp',temp);

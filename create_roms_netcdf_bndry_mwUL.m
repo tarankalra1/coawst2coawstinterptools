@@ -257,8 +257,90 @@ netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment wester
 netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
 netcdf.putAtt(nc_bndry,sandID,'field','sand_west_01, scalar, series');
 
+%sand02 
+sandID = netcdf.defVar(nc_bndry,'sand_north_02','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment northern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_north_02, scalar, series');
 
-%'sand_north_'                                      ! Input
+sandID = netcdf.defVar(nc_bndry,'sand_south_02','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment southern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_south_02, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_east_02','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment eastern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_east_02, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_west_02','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment western boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_west_02, scalar, series');
+
+%sand 03
+sandID = netcdf.defVar(nc_bndry,'sand_north_03','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment northern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_north_03, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_south_03','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment southern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_south_03, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_east_03','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment eastern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_east_03, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_west_03','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment western boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_west_03, scalar, series');
+
+%'sand_04'                                      ! Input
+sandID = netcdf.defVar(nc_bndry,'sand_north_04','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment northern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_north_04, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_south_04','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment southern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_south_04, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_east_04','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment eastern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_east_04, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_west_04','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment western boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_west_04, scalar, series');
+
+%sand05
+sandID = netcdf.defVar(nc_bndry,'sand_north_05','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment northern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_north_05, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_south_05','float',[xrhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment southern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_south_05, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_east_05','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment eastern boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_east_05, scalar, series');
+
+sandID = netcdf.defVar(nc_bndry,'sand_west_05','float',[erhodimID s_rhodimID sanddimID]);
+netcdf.putAtt(nc_bndry,sandID,'long_name','suspended noncohesive sediment western boundary condition');
+netcdf.putAtt(nc_bndry,sandID,'units','kilogram meter-3');
+netcdf.putAtt(nc_bndry,sandID,'field','sand_west_05, scalar, series');
+
 %  'suspended noncohesive sediment northern boundary condition'
 %  'kilogram meter-3'                               ! [kg/m3]
 %  'sand_north_, scalar, series'
