@@ -1,4 +1,4 @@
-Functions to use a coarse/outer grid and its solution to create initial + boundary forcing file 
+Functions to use a coarse/outer grid and its solution to create boundary forcing file 
 for a refined grid.
 
 Both are COAWST solution and grids. 
