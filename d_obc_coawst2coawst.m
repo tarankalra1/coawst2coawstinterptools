@@ -138,7 +138,7 @@ report=0;
 
 %% READ 3D VARIABLES FOR BRY
 % 
-for mm = 2:T
+for mm = 1:T
     
     aa = squeeze(zeta_coawst(:,:,mm));
     size(aa)
