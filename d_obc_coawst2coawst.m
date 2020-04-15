@@ -1,10 +1,18 @@
 % This routine :
-%  - creates boundary and initial condition files for ROMS:
-%    coawst_bdy.nc ; coawst_ini.nc
-%    on a user-defined grid for a user-defined date.
+%  - creates boundary for a COAWST grid that is refined
+%    based on an existing COAWST coarse grid solution 
+%    The refined grid is nested within coarse grid. 
+
+% input -> 
+% coarse grid -> grid_name_outer
+% solution    -> ncml link
+% refined grid -> grid_name_inner
 %
-% bry file includes zeta, ubar, vbar
-% ini file includes zeta, u, v, ubar, vbar, temp, salt
+% Solution 
+% output -> boundary forcing file 
+% 
+%
+% bry file includes zeta, ubar, vbar, sand, salt, temp
 %
 % This is currently set up to use opendap and nctoolbox.
 %
@@ -16,6 +24,7 @@ clear; close all;
 
 % Define filenames.
 % model_url : outer grid simulations
+%%%%%%%%%%%%%OUTER/COARSE GRID%%%%%%%%%%%%%%%%%%%%%%%%%%
 mdl_fname = 'http://geoport.whoi.edu/thredds/dodsC/sand/usgs/users/tkalra/bbleh/bbleh.ncml';
 grid_name_outer = '/media/taran/DATADRIVE2/marsh_result/barnegat_bay/all_other_folders/runfiles_bbleh_zd_taran/grid/bbleh_grid_073d.nc';
 
@@ -49,9 +58,12 @@ lat_rho = g.lat;
 lon_rho_z = repmat(lon_rho,1,1,coawst_N);
 lat_rho_z = repmat(lat_rho,1,1,coawst_N);
 
+close(nc);
+
+%%%%%%%%%%%%%INNER/REFINED GRID%%%%%%%%%%%%%%%%%%%%%%%%%%
 % These are grid parameters for the refined grid/inner grid
 % gridname : refined grid
-grd_fname = '/media/taran/DATADRIVE2/marsh_result/barnegat_bay/easygrid/bbleh_reedy_grd.nc';
+grid_name_inner = '/media/taran/DATADRIVE2/marsh_result/barnegat_bay/easygrid/bbleh_reedy_grd.nc';
 % initial name for refined grid that is user input 
 init_fname=  'reedy_init.nc'
 % bathymetry name for refined grid that is user input 
@@ -67,8 +79,6 @@ N       = 10;
 Vtransform  = 1;
 Vstretching = 1;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 disp('getting roms grid dimensions ...');
 
 Sinp.N           = N;            % number of vertical levels
@@ -79,39 +89,24 @@ Sinp.theta_b     = theta_b;      % bottom  control parameter
 Sinp.Tcline      = Tcline;       % surface/bottom stretching width
 
 if Vtransform == 1
-    h = ncread(grd_fname,'h');
+    h = ncread(grid_name_inner,'h');
     hmin = min(h(:));
     hc = min(max(hmin,0),Tcline);
 elseif Vtransform == 2
-    h = ncread(grd_fname,'h');
+    h = ncread(grid_name_inner,'h');
     hmin = max(0.1,min(h(:)));
     hc = Tcline;
 end
 
  % inputs pertaining to refined grids 
 Sinp.hc = hc;                          % stretching width used in ROMS
-gn = get_roms_grid(grd_fname,Sinp);
+gn = get_roms_grid(grid_name_inner,Sinp);
 [nxr,nyr] = size(gn.lon_rho);
 [nxu,nyu] = size(gn.lon_u);
 [nxv,nyv] = size(gn.lon_v);
 
-%% Read data
+%%%%%%%%%%%%%%%%%Choose time steps for forcing file %%%%%%%%%%%%%%%%%%%%%%%5
 T =3;% length(time);
-
-% Save 3D variables for interpolation from outer/bigger in temporary arrays
-% READ VARIABLES
-for mm = 1:T
-    zeta_coawst(:,:,mm)   = double(squeeze(nc{'zeta'}(mm,:,:)));
-    ubar_coawst(:,:,mm)   = double(squeeze(nc{'ubar'}(mm,:,:)));
-    vbar_coawst(:,:,mm)   = double(squeeze(nc{'vbar'}(mm,:,:)));
-end
-
-% this is required for calcualtion of water level 
-report=0;
-
-%% Initialize the variables of interest
-% these are temporary variables created for the interpolation to the
-% smaller/refined grid ... 
 
 u = zeros(nxu,nyu,N);
 v = zeros(nxv,nyv,N);
@@ -126,6 +121,21 @@ lon_rho_romsz = repmat(gn.lon_rho,1,1,N);
 lat_rho_romsz = repmat(gn.lat_rho,1,1,N);
 
 
+% Save 3D variables for interpolation from outer/bigger in temporary arrays
+% READ VARIABLES
+for mm = 1:T
+    zeta_coawst(:,:,mm)   = double(squeeze(nc{'zeta'}(mm,:,:)));
+    ubar_coawst(:,:,mm)   = double(squeeze(nc{'ubar'}(mm,:,:)));
+    vbar_coawst(:,:,mm)   = double(squeeze(nc{'vbar'}(mm,:,:)));
+end
+
+% this is required for calculation of water level 
+report=0;
+
+%% Initialize the variables of interest
+% these are temporary variables created for the interpolation to the
+% smaller/refined grid ... 
+
 %% READ 3D VARIABLES FOR BRY
 % 
 for mm = 2:T
@@ -135,17 +145,17 @@ for mm = 2:T
     % Compute vertical elevations of the grid, this is time dependent
     % These depths are negative
  %   if mod(mm-1,24) == 0;
-         zr = set_depth(coawst_Vtransform, coawst_Vstretching, ....
-                       coawst_theta_s,    coawst_theta_b, .....
-                       coawst_hc,               coawst_N,.........
-                       5,                 coawst_h, aa, report);
-                   
+    zr = set_depth(coawst_Vtransform, coawst_Vstretching, ....
+                   coawst_theta_s,    coawst_theta_b, .....
+                   coawst_hc,               coawst_N,.........
+                   5,                 coawst_h, aa, report);
+               
 %         zr = set_depth(coawst_Vtransform,coawst_Vstretching,coawst_theta_s,.......
 %                        coawst_theta_b,coawst_hc,coawst_N, ...
 %                        1,coawst_h,aa);
 %    end
     
-% These are grid(gn.lon_rho) parameters for the outer grid/bigger grid
+% interpolate using griddata
     aa(~maskr) = NaN;
     aa = maplev(aa);
     zz = griddata(lon_rho(:),lat_rho(:),aa(:),gn.lon_rho,gn.lat_rho);
@@ -187,102 +197,141 @@ for mm = 2:T
 %     vbar1 = vbar1./hv;
    
     clear vel au av aur avr velu velv velu1 velv1 ubar1 vbar1
-%
-% For each 4d variable first save it in 3d from the big grid
 % 
-%    u_coawst = double(squeeze(nc{'u'}(mm,:,:,:)));
-%    v_coawst = double(squeeze(nc{'v'}(mm,:,:,:)));
-
 % These are grid(nc temp) parameters for the outer grid/bigger grid
     temp_coawst=double(squeeze(nc{'temp'}(mm,:,:,:)));
+    salt_coawst=double(squeeze(nc{'salt'}(mm,:,:,:)));
     sand01_coawst=double(squeeze(nc{'sand_01'}(mm,:,:,:)));
-
+    sand02_coawst=double(squeeze(nc{'sand_02'}(mm,:,:,:)));
+    sand03_coawst=double(squeeze(nc{'sand_03'}(mm,:,:,:)));
+    sand04_coawst=double(squeeze(nc{'sand_04'}(mm,:,:,:)));
+    sand05_coawst=double(squeeze(nc{'sand_05'}(mm,:,:,:)));
+    u_coawst=double(squeeze(nc{'u'}(mm,:,:,:)));
+    v_coawst=double(squeeze(nc{'v'}(mm,:,:,:))); 
+    
+% 4d vars 
     for zz = 1:coawst_N
         aa = squeeze(temp_coawst(zz,:,:));
         aa(~maskr) = NaN;
         aa = maplev(aa);
-        temp2(:,:,zz) = aa;
+        temp_coarse(:,:,zz) = aa;
         clear aa
         
+        aa = squeeze(salt_coawst(zz,:,:));
+        aa(~maskr) = NaN;
+        aa = maplev(aa);
+        salt_coarse(:,:,zz) = aa;
+     	clear aa ;
+
         aa = squeeze(sand01_coawst(zz,:,:));
         aa(~maskr) = NaN;
         aa = maplev(aa);
         sand01_tmp_coarse(:,:,zz) = aa;
         clear aa
         
-%        aa = squeeze(sand02_coawst(zz,:,:));
-%        aa(~maskr) = NaN;
-%        aa = maplev(aa);
-%        sand02_2(:,:,zz) = aa;
-%        clear aa
+        aa = squeeze(sand02_coawst(zz,:,:));
+        aa(~maskr) = NaN;
+        aa = maplev(aa);
+        sand02_tmp_coarse(:,:,zz) = aa;
+        clear aa
 
-%        aa = squeeze(sand03_coawst(zz,:,:));
-%        aa(~maskr) = NaN;
-%        aa = maplev(aa);
-%        sand03_2(:,:,zz) = aa;
-%        clear aa
-%        aa = squeeze(salt_coawst(zz,:,:));
-%        aa = squeeze(salt_coawst(zz,:,:));
-%        aa(~maskr) = NaN;
-%        aa = maplev(aa);
-%        salt2(:,:,zz) = aa;
-%        clear aa
-        
-%        aa = squeeze(u_coawst(zz,:,:));
-%        aa(~masku) = NaN;
-%        aa = maplev(aa);
-%        u2(:,:,zz) = aa;
-%        clear aa
-%
-%	aa = squeeze(v_coawst(zz,:,:));
-%        aa(~maskv) = NaN;
-%       aa = maplev(aa);
-%        v2(:,:,zz) = aa;
-%        clear aa
+        aa = squeeze(sand03_coawst(zz,:,:));
+        aa(~maskr) = NaN;
+        aa = maplev(aa);
+        sand03_tmp_coarse(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(sand04_coawst(zz,:,:));
+        aa(~maskr) = NaN;
+        aa = maplev(aa);
+        sand04_tmp_coarse(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(sand05_coawst(zz,:,:));
+        aa(~maskr) = NaN;
+        aa = maplev(aa);
+        sand05_tmp_coarse(:,:,zz) = aa;
+
+        aa = squeeze(u_coawst(zz,:,:));
+        aa(~masku) = NaN;
+        aa = maplev(aa);
+        u2_tmp_coarse(:,:,zz) = aa;
+        clear aa
+    
+    	aa = squeeze(v_coawst(zz,:,:));
+        aa(~maskv) = NaN;
+        aa = maplev(aa);
+        v2_tmp_coarse(:,:,zz) = aa;
+        clear aa
     end
-%    size(zr)
+    
+ % Calculate the "u" velocity that is staggered on rho points.
+    for zz = 1:coawst_N
+        ur_coarse(:,:,zz) = u2rho_2d_mai(u2_tmp_coarse(:,:,zz));
+        vr_coarse(:,:,zz) = v2rho_2d_mai(v2_tmp_coarse(:,:,zz));
+    end
+% Compute Northward and Eastward velocities, angler is the angle for big grid
+    for zz = 1:coawst_N
+        vel = squeeze(ur_coarse(:,:,zz))+squeeze(vr_coarse(:,:,zz)).*sqrt(-1);
+        vel = vel.* exp(sqrt(-1) * angler);
+        ur_tmp_coarse(:,:,zz) = real(vel);
+        vr_tmp_coarse(:,:,zz) = imag(vel);
+    end
+    clear ur_coarse vr_coarse u2_tmp_coarse v2_tmp_coarse
+    
     for zz = 1:coawst_N
         zr(:,:,zz) = maplev(squeeze(zr(:,:,zz)));
     end
     
 % These are grid(nc temp) parameters for the outer grid/bigger grid
 %  temp is the inner/refined grid 
-    temp          = griddata(lon_rho_z,lat_rho_z,zr(:,:,1:7),temp2,.....
-                             lon_rho_romsz,lat_rho_romsz,gn.z_r);
-    sand01_tmp_ref= griddata(lon_rho_z,lat_rho_z,zr(:,:,1:7),.....
-                             sand01_tmp_coarse,lon_rho_romsz,lat_rho_romsz,gn.z_r);
-%   salt = griddata(lon_rho_z,lat_rho_z,zr(:,:,1:7),salt2,lon_rho_romsz,lat_rho_romsz,gn.z_r);
- 
-% take the "u" velocity that is staggered on rho points.    
-%    for zz = 1:coawst_N
-%        ur(:,:,zz) = u2rho_2d_mai(u2(:,:,zz));
-%        vr(:,:,zz) = v2rho_2d_mai(v2(:,:,zz));
-%    end
+    temp_ref       = griddata(lon_rho_z,    lat_rho_z,     zr(:,:,1:7), temp_coarse,.....
+                             lon_rho_romsz,lat_rho_romsz, gn.z_r);
     
-    % Compute Northward and Eastward velocities, angler is the angle for big grid
-%    for zz = 1:coawst_N
-%        vel = squeeze(ur(:,:,zz))+squeeze(vr(:,:,zz)).*sqrt(-1);
-%        vel = vel.* exp(sqrt(-1) * angler);
-%        ur(:,:,zz) = real(vel);
-%        vr(:,:,zz) = imag(vel);
-%    end
+    salt_ref       = griddata(lon_rho_z,    lat_rho_z,     zr(:,:,1:7), salt_coarse,.....
+                             lon_rho_romsz,lat_rho_romsz, gn.z_r);
+
+    sand01_tmp_ref= griddata(lon_rho_z,         lat_rho_z,      zr(:,:,1:7),.....
+                             sand01_tmp_coarse, lon_rho_romsz,  lat_rho_romsz, gn.z_r);
+
+    sand02_tmp_ref= griddata(lon_rho_z,         lat_rho_z,      zr(:,:,1:7),.....
+                             sand02_tmp_coarse, lon_rho_romsz,  lat_rho_romsz, gn.z_r);
+
+    sand03_tmp_ref= griddata(lon_rho_z,         lat_rho_z,      zr(:,:,1:7),.....
+                             sand03_tmp_coarse, lon_rho_romsz,  lat_rho_romsz, gn.z_r);
+
+    sand04_tmp_ref= griddata(lon_rho_z,         lat_rho_z,      zr(:,:,1:7),.....
+                             sand04_tmp_coarse, lon_rho_romsz,  lat_rho_romsz, gn.z_r);
+ 
+    sand05_tmp_ref= griddata(lon_rho_z,         lat_rho_z,      zr(:,:,1:7),.....
+                             sand05_tmp_coarse, lon_rho_romsz,  lat_rho_romsz, gn.z_r);
+
     % interpolation 
-%    ur2 = griddata(lon_rho_z,lat_rho_z,zr(:,:,1:7),ur,lon_rho_romsz,lat_rho_romsz,gn.z_r);
-%    vr2 = griddata(lon_rho_z,lat_rho_z,zr(:,:,1:7),vr,lon_rho_romsz,lat_rho_romsz,gn.z_r);
+    ur_ref = griddata(lon_rho_z,      lat_rho_z, zr(:,:,1:7),    ur_tmp_coarse,.....
+                      lon_rho_romsz,  lat_rho_romsz,gn.z_r);
+    vr_ref = griddata(lon_rho_z,      lat_rho_z,    zr(:,:,1:7), vr_tmp_coarse,.....
+                       lon_rho_romsz, lat_rho_romsz,gn.z_r);
     
     % Rotate velocities to ROMS grid, important!, gn.angle is angle for refined grid
-%    for zz = 1:N
-%        ur2(:,:,zz) = squeeze(ur2(:,:,zz)).*cos(gn.angle)+squeeze(vr2(:,:,zz)).*sin(gn.angle);
-%        vr2(:,:,zz) = squeeze(vr2(:,:,zz)).*cos(gn.angle)-squeeze(ur2(:,:,zz)).*sin(gn.angle);
-%        u(:,:,zz) = rho2u_2d_mw(ur2(:,:,zz));  % defined at u points
-%        v(:,:,zz) = rho2v_2d_mw(vr2(:,:,zz));  % defined at v points
-%    end
-    
+    for zz = 1:N
+        ur2_ref(:,:,zz) = squeeze(ur_ref(:,:,zz)).*cos(gn.angle) + .....
+                          squeeze(vr_ref(:,:,zz)).*sin(gn.angle);
+        vr2_ref(:,:,zz) = squeeze(vr_ref(:,:,zz)).*cos(gn.angle) -.....
+                          squeeze(ur_ref(:,:,zz)).*sin(gn.angle);
+        u_tmp_ref(:,:,zz) = rho2u_2d_mw(ur2_ref(:,:,zz));  % defined at u points
+        v_tmp_ref(:,:,zz) = rho2v_2d_mw(vr2_ref(:,:,zz));  % defined at v points
+    end
+    clear ur_ref vr_ref ur2_ref  vr2_ref
     % Remove possible NaN values
     for zz = 1:N
-        aa = squeeze(temp(:,:,zz));
+        aa = squeeze(temp_ref(:,:,zz));
         aa = maplev(aa);
-        temp(:,:,zz) = aa;
+        temp_ref(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(salt_ref(:,:,zz));
+        aa = maplev(aa);
+        salt_ref(:,:,zz) = aa;
         clear aa
         
         aa = squeeze(sand01_tmp_ref(:,:,zz));
@@ -290,39 +339,68 @@ for mm = 2:T
         sand01_tmp_ref(:,:,zz) = aa;
         clear aa
         
-%        aa = squeeze(u(:,:,zz));
-%        aa = maplev(aa);
-%        u(:,:,zz) = aa;
-%        clear aa
+        aa = squeeze(sand02_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        sand01_tmp_ref(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(sand03_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        sand03_tmp_ref(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(sand04_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        sand04_tmp_ref(:,:,zz) = aa;
+        clear aa
+
+        aa = squeeze(sand05_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        sand05_tmp_ref(:,:,zz) = aa;
+        clear aa
         
-%        aa = squeeze(v(:,:,zz));
-%        aa = maplev(aa);
-%        v(:,:,zz) = aa;
-%        clear aa
+        aa = squeeze(u_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        u_tmp_ref(:,:,zz) = aa;
+        clear aa
+        
+        aa = squeeze(v_tmp_ref(:,:,zz));
+        aa = maplev(aa);
+        v_tmp_ref(:,:,zz) = aa;
+        clear aa
     end
 % temp_4d is the refined/inner grid
-    temp_4d(:,:,:,mm)=temp(:,:,:); 
+    temp_4d(:,:,:,mm)=temp_ref(:,:,:); 
+    salt_4d(:,:,:,mm)=salt_ref(:,:,:); 
     sand01_4d(:,:,:,mm)=sand01_tmp_ref(:,:,:); 
+    sand02_4d(:,:,:,mm)=sand02_tmp_ref(:,:,:); 
+    sand03_4d(:,:,:,mm)=sand03_tmp_ref(:,:,:); 
+    sand04_4d(:,:,:,mm)=sand04_tmp_ref(:,:,:); 
+    sand05_4d(:,:,:,mm)=sand05_tmp_ref(:,:,:);
+    u_4d(:,:,:,mm)=u_tmp_ref(:,:,:) ;
+    v_4d(:,:,:,mm)=v_tmp_ref(:,:,:) ;
 end
-% 
+clear temp_ref salt_ref sand01_tmp_ref sand02_tmp_ref
+clear sand03_tmp_ref sand04_temp_ref sand05_tmp_ref
+clear u_tmp_ref v_tmp_ref
+%
 % %% CREATE BOUNDARY CONDITION
 % 
 time = time-datenum(1858,11,17);
 
 zeta_north = squeeze(zeta(:,end,:));
-ubar_north = squeeze(ubar(:,end,:));
-vbar_north = squeeze(vbar(:,end,:));
-
 zeta_south = squeeze(zeta(:,1,:));
-ubar_south = squeeze(ubar(:,1,:));
-vbar_south = squeeze(vbar(:,1,:));
-
 zeta_east = squeeze(zeta(end,:,:));
-ubar_east = squeeze(ubar(end,:,:));
-vbar_east = squeeze(vbar(end,:,:));
-
 zeta_west = squeeze(zeta(1,:,:));
+
+ubar_north = squeeze(ubar(:,end,:));
+ubar_south = squeeze(ubar(:,1,:));
+ubar_east = squeeze(ubar(end,:,:));
 ubar_west = squeeze(ubar(1,:,:));
+
+vbar_north = squeeze(vbar(:,end,:));
+vbar_south = squeeze(vbar(:,1,:));
+vbar_east = squeeze(vbar(end,:,:));
 vbar_west = squeeze(vbar(1,:,:));
 
 temp_north = squeeze(temp_4d(:,end,:,:));
@@ -330,10 +408,45 @@ temp_south = squeeze(temp_4d(:,1,:,:));
 temp_east  = squeeze(temp_4d(end,:,:,:));
 temp_west  = squeeze(temp_4d(1,:,:,:));
 
+salt_north = squeeze(salt_4d(:,end,:,:));
+salt_south = squeeze(salt_4d(:,1,:,:));
+salt_east  = squeeze(salt_4d(end,:,:,:));
+salt_west  = squeeze(salt_4d(1,:,:,:));
+
 sand_north_01=squeeze(sand01_4d(:,end,:,:));
 sand_south_01=squeeze(sand01_4d(:,1,:,:));
 sand_east_01=squeeze(sand01_4d(end,:,:,:));
 sand_west_01=squeeze(sand01_4d(1,:,:,:));
+
+sand_north_02=squeeze(sand02_4d(:,end,:,:));
+sand_south_02=squeeze(sand02_4d(:,1,:,:));
+sand_east_02=squeeze(sand02_4d(end,:,:,:));
+sand_west_02=squeeze(sand02_4d(1,:,:,:));
+
+sand_north_03=squeeze(sand03_4d(:,end,:,:));
+sand_south_03=squeeze(sand03_4d(:,1,:,:));
+sand_east_03=squeeze(sand03_4d(end,:,:,:));
+sand_west_03=squeeze(sand03_4d(1,:,:,:));
+
+sand_north_04=squeeze(sand04_4d(:,end,:,:));
+sand_south_04=squeeze(sand04_4d(:,1,:,:));
+sand_east_04=squeeze(sand04_4d(end,:,:,:));
+sand_west_04=squeeze(sand04_4d(1,:,:,:));
+
+sand_north_05=squeeze(sand05_4d(:,end,:,:));
+sand_south_05=squeeze(sand05_4d(:,1,:,:));
+sand_east_05=squeeze(sand05_4d(end,:,:,:));
+sand_west_05=squeeze(sand05_4d(1,:,:,:));
+
+u_north=squeeze(u_4d(:,end,:,:));
+u_south=squeeze(u_4d(:,1,:,:));
+u_east=squeeze(u_4d(end,:,:,:));
+u_west=squeeze(u_4d(1,:,:,:));
+
+v_north=squeeze(v_4d(:,end,:,:));
+v_south=squeeze(v_4d(:,1,:,:));
+v_east=squeeze(v_4d(end,:,:,:));
+v_west=squeeze(v_4d(1,:,:,:));
 
 create_roms_bry_from_coawst(grd_fname,bry_fname,time,...
     Sinp.theta_s,Sinp.theta_b,Sinp.Tcline,Sinp.Vtransform,Sinp.Vstretching,Sinp.N,...
@@ -342,4 +455,11 @@ create_roms_bry_from_coawst(grd_fname,bry_fname,time,...
     zeta_east,ubar_east,vbar_east,...
     zeta_west,ubar_west,vbar_west, ....
     temp_north, temp_south, temp_east, temp_west, ....
-    sand_north_01, sand_south_01, sand_east_01, sand_west_01);
+    salt_north, salt_south, salt_east, salt_west, ....
+    u_north, u_south, u_east, u_west, .....
+    v_north, v_south, v_east, v_west, .....
+    sand_north_01, sand_south_01, sand_east_01, sand_west_01,....
+    sand_north_02, sand_south_02, sand_east_02, sand_west_02,....
+    sand_north_03, sand_south_03, sand_east_03, sand_west_03,....
+    sand_north_04, sand_south_04, sand_east_04, sand_west_04,....
+    sand_north_05, sand_south_05, sand_east_05, sand_west_05);
