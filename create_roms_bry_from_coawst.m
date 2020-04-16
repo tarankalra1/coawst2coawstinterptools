@@ -13,8 +13,7 @@ function create_roms_from_coawst(grid_file,bry_file,bry_time,...
     sand_north_03, sand_south_03, sand_east_03, sand_west_03,......
     sand_north_04, sand_south_04, sand_east_04, sand_west_04,......
     sand_north_05, sand_south_05, sand_east_05, sand_west_05);
- 
-
+  
 % Create a netcdf file that contains baoundary data for ROMS
 % zeta, ubar and vbar.
 
@@ -77,10 +76,10 @@ ncwrite(bry_file,'temp_south',temp_south);
 ncwrite(bry_file,'temp_east', temp_east);
 ncwrite(bry_file,'temp_west', temp_west);
 
-ncwrite(bry_file,'salt_north',temp_north);
-ncwrite(bry_file,'salt_south',temp_south);
-ncwrite(bry_file,'salt_east', temp_east);
-ncwrite(bry_file,'salt_west', temp_west);
+ncwrite(bry_file,'salt_north',salt_north);
+ncwrite(bry_file,'salt_south',salt_south);
+ncwrite(bry_file,'salt_east', salt_east);
+ncwrite(bry_file,'salt_west', salt_west);
 
 ncwrite(bry_file,'sand_north_01',sand_north_01);
 ncwrite(bry_file,'sand_south_01',sand_south_01);
