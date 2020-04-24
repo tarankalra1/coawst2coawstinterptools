@@ -1,0 +1,32 @@
+%
+% This code will add the angle variable to the grid
+% - requires sw_dist.m from COAWST mfiles
+%
+% Last update: 
+%       USGS Salme Cook secook@usgs.gov April 2020
+
+wd = input('Write data to grid file? (1) yes (2) no ');
+
+% Grid Name
+gdname = 'bbleh_reedy_grd_angle.nc';
+G = get_roms_grid(gdname);
+
+[LP,MP]=size(G.h);
+
+% Code John Warner gave to Salme Cook in April 2020
+% relies on sw_dist from coawsttools
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+    % Compute dx, dy, angle.
+      [dx,ang]=sw_dist(G.lat_u(:),G.lon_u(:),'km');
+      ang=[ang(:); ang(end)];
+      ang=reshape(ang,LP-1,MP);
+      ang=[ang(1,:); ang(1:end-1,:); ang(end-1,:)];
+      ang=ang*pi/180;
+      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+
+if wd==1
+    nccreate(gdname,'angle','Dimensions',{'xi_rho',LP,'eta_rho',MP})
+    ncwrite(gdname,'angle',ang);
+end
