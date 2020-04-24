@@ -8,3 +8,6 @@ create boundary forcing file
 Required primary functions
 * create_roms_bry_from_coawst 
 * create_roms_netcdf_bndry_mwUL 
+
+
+#. sw_dist.m --> from COAWST mtools. Define distance between two lat,lon coordinates
