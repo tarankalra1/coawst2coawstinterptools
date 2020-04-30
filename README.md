@@ -16,7 +16,14 @@ Required primary functions
 * u2rho_3d_mai.m
 * v2rho_3d_mai.m
 
-2. Additional files folder
+2. swan_forcing 
+creating TPAR files from an existing COAWST solution
+* create_TPAR_coawst.m --> Main file 
+
+Required primary functions
+*  find_nearest_point.m
+
+3. Additional files folder
 * 1. sw_dist.m --> from COAWST mtools. Define distance between two lat,lon coordinates
 
 * 2. add_angle_to_grid.m --> will add the variable "angle" to grid 
