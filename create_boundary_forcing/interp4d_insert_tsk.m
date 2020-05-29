@@ -1,0 +1,26 @@
+%function [F_3d]=interp3d_tsk(lon_rho_coarse_col, lat_rho_coarse_col, v, ...
+%                             lon_rho_ref_col, lat_rho_ref_col, .....
+%                             nx_ref, ny_ref )
+function [F]=interp4d_insert_tsk(lon_rho_coarse_3d_col, lat_rho_coarse_3d_col,...
+                                  zr_coarse_3d_col, .....
+                                  v_4d, F_4d_coarse,.....
+                                  lon_rho_ref_3d_col, lat_rho_ref_3d_col, ....
+                                  zr_ref_3d_col, .....
+                                  nx_ref, ny_ref, ref_N);
+
+   % temp
+grd_size=length(lon_rho_coarse_3d_col);
+
+%v_4d=temp_tmp_coarse;
+%Reshape all the data in column vector
+V_4d_col=reshape(v_4d,[grd_size 1]);
+
+F_4d_coarse.Values = V_4d_col;
+
+F_interp=F_4d_coarse(lon_rho_ref_3d_col, lat_rho_ref_3d_col, .....
+                        zr_ref_3d_col);
+
+F=reshape(F_interp, nx_ref, ny_ref, ref_N);
+
+clear V_4d_col F_interp
+

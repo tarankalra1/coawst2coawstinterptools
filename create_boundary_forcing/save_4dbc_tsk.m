@@ -1,0 +1,84 @@
+function [zeta_north, ubar_north, vbar_north, temp_north, ....
+          salt_north, u_north, v_north, ......
+	  sand_north_01, sand_north_02, sand_north_03, .....
+	  sand_north_04, sand_north_05,........
+	  zeta_south, ubar_south, vbar_south, .....
+	  temp_south, salt_south, u_south, v_south, ......
+	  sand_south_01, sand_south_02, sand_south_03, .....
+	  sand_south_04, sand_south_05,........
+      zeta_east, ubar_east, vbar_east, temp_east, ....
+      salt_east, u_east, v_east, ......
+	  sand_east_01, sand_east_02, sand_east_03, .....
+	  sand_east_04, sand_east_05,........
+      zeta_west, ubar_west, vbar_west, temp_west, ....
+      salt_west, u_west, v_west, ......
+	  sand_west_01, sand_west_02, sand_west_03, .....
+	  sand_west_04, sand_west_05]=save_4dbc_tsk(zeta_ref, .....
+                            ubar_ref, vbar_ref, .....
+                            temp_4d, salt_4d, u_4d, v_4d,......
+                            sand01_4d, sand02_4d, sand03_4d,....
+                            sand04_4d, sand05_4d, count_1, count_end);
+			    
+  zeta_north = squeeze(zeta_ref(:, end,      count_1:count_end));
+  ubar_north = squeeze(ubar_ref(:, end,      count_1:count_end));
+  vbar_north = squeeze(vbar_ref(:, end,      count_1:count_end));
+
+  temp_north = squeeze(temp_4d(:, end, :,count_1:count_end));
+  salt_north = squeeze(salt_4d(:, end, :,count_1:count_end));
+  u_north=squeeze(u_4d(:, end,:,         count_1:count_end));
+  v_north=squeeze(v_4d(:, end,:,         count_1:count_end));
+
+  sand_north_01=squeeze(sand01_4d(:,end,:,count_1:count_end));
+  sand_north_02=squeeze(sand02_4d(:,end,:,count_1:count_end));
+  sand_north_03=squeeze(sand03_4d(:,end,:,count_1:count_end));
+  sand_north_04=squeeze(sand04_4d(:,end,:,count_1:count_end));
+  sand_north_05=squeeze(sand05_4d(:,end,:,count_1:count_end));
+
+%elseif(isouth='true')
+  zeta_south = squeeze(zeta_ref(:,  1,        count_1:count_end));
+  ubar_south = squeeze(ubar_ref(:,  1,        count_1:count_end));
+  vbar_south = squeeze(vbar_ref(:,  1,        count_1:count_end));
+
+  temp_south = squeeze(temp_4d(:,  1,  :, count_1:count_end));
+  salt_south = squeeze(salt_4d(:,  1,  :, count_1:count_end));
+  u_south=squeeze(u_4d(:,  1, :,          count_1:count_end));
+  v_south=squeeze(v_4d(:,  1, :,          count_1:count_end));
+
+  sand_south_01=squeeze(sand01_4d(:,1,:, count_1:count_end));
+  sand_south_02=squeeze(sand02_4d(:,1,:, count_1:count_end));
+  sand_south_03=squeeze(sand03_4d(:,1,:, count_1:count_end));
+  sand_south_04=squeeze(sand04_4d(:,1,:, count_1:count_end));
+  sand_south_05=squeeze(sand05_4d(:,1,:, count_1:count_end));
+
+%elseif(ieast='true')  
+  zeta_east = squeeze(zeta_ref(end, :,       count_1:count_end));
+  ubar_east = squeeze(ubar_ref(end, :,       count_1:count_end));
+  vbar_east = squeeze(vbar_ref(end, :,       count_1:count_end));
+
+  temp_east  = squeeze(temp_4d(end,:,  :,count_1:count_end));
+  salt_east  = squeeze(salt_4d(end,:,  :,count_1:count_end));
+  u_east=squeeze (u_4d(end, :, :,        count_1:count_end));
+  v_east=squeeze (v_4d(end, :, :,        count_1:count_end));
+
+  sand_east_01=squeeze(sand01_4d(end,:,:,count_1:count_end));
+  sand_east_02=squeeze(sand02_4d(end,:,:,count_1:count_end));
+  sand_east_03=squeeze(sand03_4d(end,:,:,count_1:count_end));
+  sand_east_04=squeeze(sand04_4d(end,:,:,count_1:count_end));
+  sand_east_05=squeeze(sand05_4d(end,:,:,count_1:count_end));
+
+%elseif(iwest='true')
+  zeta_west = squeeze(zeta_ref(1,   :,       count_1:count_end));
+  ubar_west = squeeze(ubar_ref(1,   :,       count_1:count_end));
+  vbar_west = squeeze(vbar_ref(1,   :,       count_1:count_end));
+
+  temp_west  = squeeze(temp_4d(1,  :,  :,count_1:count_end));
+  salt_west  = squeeze(salt_4d(1,  :,  :,count_1:count_end));
+  u_west=squeeze (u_4d(1,   :, :,        count_1:count_end));
+  v_west=squeeze (v_4d(1,   :, :,        count_1:count_end));
+
+  sand_west_01=squeeze(sand01_4d(1,:,:,count_1:count_end));
+  sand_west_02=squeeze(sand02_4d(1,:,:,count_1:count_end));
+  sand_west_03=squeeze(sand03_4d(1,:,:,count_1:count_end));
+  sand_west_04=squeeze(sand04_4d(1,:,:,count_1:count_end));
+  sand_west_05=squeeze(sand05_4d(1,:,:,count_1:count_end));
+
