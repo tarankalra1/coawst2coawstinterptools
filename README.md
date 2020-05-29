@@ -3,12 +3,13 @@ for a refined grid.
 
 Both are COAWST solution and grids. 
 
-##### 1.Boundary forcing file generation codes: 
-step1_scatinterp.m --> first call this file to create a 3d and 4d variable (in this
+Boundary forcing file generation codes: 
+
+##### 1. step1_scatinterp.m --> first call this file to create a 3d and 4d variable (in this
 case zeta and temp) that can be replaced using scatinterp later. 
 
 
-#### step2_bndry_use_scatinterp_funcs.m --> Step 2 to use the scatinterp function
+##### 2. step2_bndry_use_scatinterp_funcs.m --> Step 2 to use the scatinterp function
 and replace the 3d and 4d vars with the desired parameters required for interpolation
 (in this case, ubar, vbar, u, v, sand01-05, temp, salt)
 
