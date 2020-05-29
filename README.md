@@ -3,15 +3,14 @@ for a refined grid.
 
 Both are COAWST solution and grids. 
 
-1.Boundary forcing file generation codes: 
-``` step1_scatinterp.m --> first call this file to create a 3d and 4d variable (in this
+##### 1.Boundary forcing file generation codes: 
+step1_scatinterp.m --> first call this file to create a 3d and 4d variable (in this
 case zeta and temp) that can be replaced using scatinterp later. 
-```
 
-``` step2_bndry_use_scatinterp_funcs.m --> Step 2 to use the scatinterp function
+
+#### step2_bndry_use_scatinterp_funcs.m --> Step 2 to use the scatinterp function
 and replace the 3d and 4d vars with the desired parameters required for interpolation
 (in this case, ubar, vbar, u, v, sand01-05, temp, salt)
-```
 
 Required primary functions
 * save_4dbc_tsk.m 
@@ -28,7 +27,7 @@ Required primary functions
 * v2rho_3d_mai.m
 
 * d_bndry_coawst2coawst_griddata.m --> Legacy code to create boundary forcing with grid
-data.
+data (From Christie H. and Maitane O).
 
 2. swan_forcing 
 creating TPAR files from an existing COAWST solution
