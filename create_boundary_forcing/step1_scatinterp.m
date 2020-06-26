@@ -26,7 +26,8 @@ clear all ; close all ; clc ; clf;
 
 % Define filenames.
 % model_url : outer grid simulations
-mdl_fname='https://geoport.whoi.edu/thredds/dodsC/vortexfs1/usgs/users/tkalra/barnegatsim/bbleh.ncml';
+%mdl_fname='https://geoport.whoi.edu/thredds/dodsC/vortexfs1/usgs/users/tkalra/barnegatsim/bbleh.ncml';
+mdl_fname='http://geoport.whoi.edu/thredds/dodsC/sand/usgs/users/tkalra/bbleh/1_30/bbleh.ncml';
 grid_name_outer = '/media/taran/DATADRIVE2/marsh_result/barnegat_bay/all_other_folders/runfiles_bbleh_zd_taran/grid/bbleh_grid_073d.nc';
 
 setup_nctoolbox;
