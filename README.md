@@ -46,3 +46,5 @@ Required primary functions
 * 1. sw_dist.m --> from COAWST mtools. Define distance between two lat,lon coordinates
 
 * 2. add_angle_to_grid.m --> will add the variable "angle" to grid 
+
+* 3. find_veg_mask_reedy.m --> Zafers contour lines for veg used to map on a nested grid
