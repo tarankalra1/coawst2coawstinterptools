@@ -48,3 +48,12 @@ Required primary functions
 * 2. add_angle_to_grid.m --> will add the variable "angle" to grid 
 
 * 3. find_veg_mask_reedy.m --> Zafers contour lines for veg used to map on a nested grid
+
+
+4. Common source of error 
+*  wind forcing file may have NaN's double check, rerun the wind forcing code..
+ sometimes it works
+
+* NARR data commonly used in the past was not found after 2015. But double check
+
+ 
