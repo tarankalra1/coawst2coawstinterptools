@@ -9,6 +9,7 @@ b) Break down the forcing to have a file generated separately for northern, east
 In this case, step 2 first creates the forcing only for northern bc. That can be easily changed. 
 Step 3, Step 4 append to the forcing file by incorporating eastern and western boundaries. 
 
+--> Hacks and running tips: 
 In this code, temperature and salinity were separately added
 because of the nature of the problem. There were 6 sand classes. All of that can be easily modified. 
 
