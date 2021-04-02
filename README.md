@@ -69,10 +69,8 @@ Supporting files:
 * d_bndry_coawst2coawst_griddata.m --> Legacy code to create boundary forcing with grid
 data (From Christie H. and Maitane O).
 
-##### 3. Using mexcdf for easy grid 
-I had to use this particular mexcdf for easy grid
-C:\Users\tkalra\Desktop\COAWST\COAWST_v3_3_local-master\Tools\mfiles\matlab_tools\netcdf\ncutility\mexcdf.m
 
+Items to be modifed later and would not make sense right now.
 
 2. swan_forcing 
 creating TPAR files from an existing COAWST solution
@@ -95,4 +93,6 @@ Required primary functions
 
 * NARR data commonly used in the past was not found after 2015. But double check
 
- 
+* I had to use this particular mexcdf for easy grid
+C:\Users\tkalra\Desktop\COAWST\COAWST_v3_3_local-master\Tools\mfiles\matlab_tools\netcdf\ncutility\mexcdf.m
+
