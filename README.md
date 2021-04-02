@@ -1,7 +1,25 @@
-Functions to use a coarse/outer grid and its solution to create boundary forcing file 
-for a refined grid.
+The main codebase in the repository is "create_ROMS_forcing". It helps to create a forcing
+file every hour or at any other frequency for forcing the bigger (coarser) model grid solution
+to a smaller/inner/refined model grid solution. If the forcing is imposed every hour, the files
+get larger in size. Therefore, we follow two strategies:
+a) first we save the structure of 3d and 4d vars in Step 1 that
+   gets replaced using scatinterp.
+b) Break down the forcing to have a file generated separately for northern, eastern, western bc. 
 
-Both are COAWST solution and grids. 
+In this case, step 2 first creates the forcing only for northern bc. That can be easily changed. 
+Step 3, Step 4 append to the forcing file by incorporating eastern and western boundaries. 
+
+In this code, temperature and salinity were separately added
+because of the nature of the problem. There were 6 sand classes. All of that can be easily modified. 
+
+Always run the code for "1 day"  of forcing file generation and test. 
+
+The code could also be improved to concatenate two different contiguous periods of time if forcing
+files start to become "huge". For that the "time" array needs to be modified.    
+
+
+Functions to use a coarse/outer grid and its solution to create boundary forcing file 
+for a refined grid. Both are COAWST solution and grids. 
 
 Boundary forcing file generation codes: 
 
@@ -9,23 +27,43 @@ Boundary forcing file generation codes:
 case zeta and temp) that can be replaced using scatinterp later. 
 
 
-##### 2. step2_bndry_use_scatinterp_funcs.m --> Step 2 to use the scatinterp function
-and replace the 3d and 4d vars with the desired parameters required for interpolation
+##### 2. step2_bndry_north.m --> Step 2 modify northern bc to use the scatinterp function
+northern bc addition
+--and replace the 3d and 4d vars with the desired parameters required for interpolation
 (in this case, ubar, vbar, u, v, sand01-05, temp, salt)
 
-Required primary functions
-* save_4dbc_tsk.m 
-*  maplev_4dvar.m
-* interp3d_insert_tsk.m
-* interp4d_insert_tsk.m
-* create_roms_bry_from_coawst 
-* create_roms_netcdf_bndry_mwUL 
-* rho2u_2d_mai.m
-* rho2v_2d_mai.m
-* u2rho_2d_mai.m
-* v2rho_2d_mai.m
-* u2rho_3d_mai.m
-* v2rho_3d_mai.m
+
+##### 3. step2_bndry_east.m  --> Step 3 modify eastern bc to use the scatinterp function
+eastern bc addition 
+--and replace the 3d and 4d vars with the desired parameters required for interpolation
+(in this case, ubar, vbar, u, v, sand01-05, temp, salt)
+
+##### 4. step2_bndry_west.m --> Step 4 modify western bc to use the scatinterp function
+western bc addition 
+--and replace the 3d and 4d vars with the desired parameters required for interpolation
+(in this case, ubar, vbar, u, v, sand01-05, temp, salt)
+
+--------------------------
+Supporting files:
+--------------------------
+1.  interp3d_insert_tsk.m
+2.  save_westbc.m
+3.  interp4d_insert_tsk.m
+4.  rho2v_2d_mai.m
+5.  v2rho_2d_mai.m
+5.  v2rho_3d_mai.m
+6.  save_4dbc_tsk.m
+7.  save_eastbc.m
+8.  save_westbc.m
+9.  create_append_roms_east.m
+10. create_append_roms_west.m
+11. maplev_4dvar_tsk.m
+12. u2rho_2d_mai.m
+13. u2rho_3d_mai.m
+14. create_roms_bry_from_coawst.m
+15. rho2u_2d_mai.m
+16. rho2u_3d_mai.m
+
 
 * d_bndry_coawst2coawst_griddata.m --> Legacy code to create boundary forcing with grid
 data (From Christie H. and Maitane O).
